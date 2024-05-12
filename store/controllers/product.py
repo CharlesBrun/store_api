@@ -17,8 +17,10 @@ async def post(
     have_name = await usecase.have_product_by_name(name=body.name)
     if have_name:
         raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="Já existe um produto com esse nome")
-    else:
-        return await usecase.create(body=body)
+    if body.name is None or body.name == "":
+        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="Campo nome vazio")
+
+    return await usecase.create(body=body)
 
 
 @router.get(path="/{id}", status_code=status.HTTP_200_OK)
