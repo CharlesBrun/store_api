@@ -13,7 +13,12 @@ router = APIRouter(tags=["products"])
 async def post(
     body: ProductIn = Body(...), usecase: ProductUsecase = Depends()
 ) -> ProductOut:
-    return await usecase.create(body=body)
+
+    have_name = await usecase.have_product_by_name(name=body.name)
+    if have_name:
+        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="Já existe um produto com esse nome")
+    else:
+        return await usecase.create(body=body)
 
 
 @router.get(path="/{id}", status_code=status.HTTP_200_OK)

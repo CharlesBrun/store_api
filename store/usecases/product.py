@@ -27,6 +27,14 @@ class ProductUsecase:
             raise NotFoundException(message=f"Product not found with filter: {id}")
 
         return ProductOut(**result)
+    
+    async def have_product_by_name(self, name: str) -> ProductOut:
+        result = await self.collection.find_one({"name": name})
+
+        if not result:
+            return False
+
+        return True
 
     async def query(self) -> List[ProductOut]:
         return [ProductOut(**item) async for item in self.collection.find()]
